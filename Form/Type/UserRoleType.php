@@ -171,6 +171,13 @@ class UserRoleType extends AbstractType
                             }
                             $form->add("___ADD_ROLE_".$role,HiddenType::class , ['data' => $role]);
                         }
+                    }
+                    else
+                    {
+                        if ($this->display=="all")
+                        {
+                            $form->add($role, $formOptions['input_type'], $options);
+                        }
                         
                     }
                 }
