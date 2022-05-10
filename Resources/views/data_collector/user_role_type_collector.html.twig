@@ -2,19 +2,42 @@
 
 {% block toolbar %}
     {% set icon %}
-        {% include('@AldafluxUserRoleType/data_collector/icon/user_role_type.svg') %}
-        <span class="sf-toolbar-value">UserRoleTypeCollector</span>
+        {% if collector.data %}
+             {% if collector.HiddenDefaultRole %}
+                {% include('@AldafluxUserRoleType/data_collector/icon/user_role_type_warning.svg') %}
+            {% else %}
+                {% include('@AldafluxUserRoleType/data_collector/icon/user_role_type_success.svg') %}
+            {% endif %}
+            
+        {% else %}
+            {% include('@AldafluxUserRoleType/data_collector/icon/user_role_type.svg') %}
+        {% endif %}
+        <span class="sf-toolbar-value">User Role</span>
     {% endset %}
 
-    {% set text %}
-        {# this is the content displayed when hovering the mouse over  the toolbar panel #}
-         
-        
-        <div class="sf-toolbar-info-piece">
-            <b>Collector UserRoleTypeCollector</b>
-            <span class='sf-toolbar-status sf-toolbar-status-green'>OK</span>
-        </div>
-    {% endset %}
+
+    {% if collector.data %}
+        {% set text %}
+            <div class="sf-toolbar-info-piece">
+                <b>Config</b>
+                <span class='sf-toolbar-status sf-toolbar-status-green'>{{collector.configName}}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Profil</b>
+                <span class='sf-toolbar-status sf-toolbar-status-green'>{{collector.profile}}</span>
+            </div>
+            <div class="sf-toolbar-info-piece">
+                <b>Security</b>
+                <span class='sf-toolbar-status sf-toolbar-status-green'>{{collector.SecurityChecked}}</span>
+            </div>
+            {% if collector.hiddenDefaultRole %}
+                <div class="sf-toolbar-info-piece">
+                    <b>Hidden Default Role</b>
+                    <span class='sf-toolbar-status sf-toolbar-status-red'>{{collector.hiddenDefaultRole}}</span>
+                </div>
+            {% endif %}
+        {% endset %}
+    {% endif %}
 
     {{ include('@WebProfiler/Profiler/toolbar_item.html.twig') }}
     
@@ -48,13 +71,74 @@
         }
     </style>
     
-    <h2> UserRoleTypeCollector </h2>
+    
+    
+    <h2> User Role Type </h2>
    
-     <div class="empty">
+    {% if not collector.data %}
+        <div class="empty">
             <p>There are no logs .</p>
     </div>
+ 
+    {% else %}
+
+              
+    <div class="metrics">
+        {% if collector.config %}
+            <div class="metric">
+                <span class="value">{{collector.configName}}</span>
+                <span class="label">Config name</span>
+            </div>
+        {% endif %}
+        {% if collector.profile %}
+            <div class="metric">
+                <span class="value">{{collector.profile}}</span>
+                <span class="label">Profil name</span>
+            </div>
+        {% endif %}
+            <div class="metric">
+                <span class="value">{{collector.SecurityChecked}}</span>
+                <span class="label">Security Checked</span>
+            </div>
+            <div class="metric">
+                <span class="value">{{collector.display}}</span>
+                <span class="label">display</span>
+            </div>
+        
+    </div>
+                     
+        
+        
     
-       
+    
+                        <h4>Roles</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="key">Role</th>
+                                        <th scope="col">Libellé</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                {% if collector.hiddenDefaultRole %}
+                                    <tr class="status-error">
+                                        <th>{{  collector.hiddenDefaultRole }}</th>
+                                        <td>Hiddien</td>
+                                    <tr>
+                                {% endif %}
+                                {%  for key,  role in collector.RolesFormated  %}
+                                    <tr>
+                                        <th>{{ role }}</th>
+                                        <td>{{ key}}</td>
+                                    <tr>
+                                 {%  endfor  %}
+                                    </tr>
+                                </tbody>
+                            </table>
+        
+    {% endif %}
                    
 </div>
+
 {% endblock %}

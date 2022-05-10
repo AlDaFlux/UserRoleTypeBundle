@@ -19,7 +19,7 @@ use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-
+use Aldaflux\AldafluxUserRoleTypeBundle\DataCollector\UserRoleTypeCollector;
 
 /**
  * Role form
@@ -43,12 +43,18 @@ class UserRoleType extends AbstractType
     
     private $configs;
     private $config;
+    private $configName;
+    
+    private $hidden_default_role;
     
     private $label;
+    private $collector;
+    
+    private $options;
     
     
 
-    public function __construct(RoleHierarchyInterface $roleHierarchy , Security $security, ParameterBagInterface $parameters)
+    public function __construct(RoleHierarchyInterface $roleHierarchy , Security $security, ParameterBagInterface $parameters, UserRoleTypeCollector $collector)
     {
         
         $this->roleHierarchy = $roleHierarchy;
@@ -57,6 +63,10 @@ class UserRoleType extends AbstractType
         $this->user = $this->security->getUser();
         $this->roles = array();
         $this->rolesToKeep = array();
+        
+        
+        $this->collector=$collector;
+        
         
         $this->profiles=$parameters->Get("aldaflux_user_role_type.profiles");
         $this->configs=$parameters->Get("aldaflux_user_role_type.configs");
@@ -75,6 +85,22 @@ class UserRoleType extends AbstractType
     }
     
     
+    public function ConfigOrOptions($optionName)
+    {
+        
+        if (isset($this->options[$optionName]) && $this->options[$optionName])
+        {
+            $this->{$optionName}=$this->options[$optionName];
+        }
+        elseif(isset($this->config[$optionName]))
+        {
+            $this->{$optionName}=$this->config[$optionName];
+        }
+        $this->collector->data[$optionName]=$this->{$optionName};
+    }
+
+        
+    
 
     /**
      * @inheritdoc
@@ -82,26 +108,26 @@ class UserRoleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         
+            $this->options=$options;
+                    
+            
             $this->config=$this->configs[$options["config"]];
+            $this->configName=$options["config"];
             
             
-            $this->display=$this->config["display"];
+            $this->collector->data['config_name']= $this->configName;
+            $this->collector->data['config']=$this->config;
             
-            if ($options["profile"])
-            {
-                $this->profile=$options["profile"];
-            }
-            elseif(isset($this->config["profile"]))
-            {
-                $this->profile=$this->config["profile"];
-            }
-        
-        
+            $this->configOrOptions("display");
+            $this->configOrOptions("profile");
+            $this->configOrOptions("security_checked");
+            $this->configOrOptions("hidden_default_role");
+            
+
 
         
             if ($this->profile)
             {
-                
                 if (isset($this->profiles[$this->profile]))
                 {
                     $this->roles=[];
@@ -127,19 +153,43 @@ class UserRoleType extends AbstractType
                     'ROLE_USER' => 'ROLE_USER',
                     'ROLE_ADMIN' => 'ROLE_ADMIN'
                     ];
-                }                
+                }
+
+       
+             
+                
+                
+                
             }
             
+            
+            $this->collector->data['roles']=$this->roles;
+            
+               
                          
-                
+            
             $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) 
             {
+                
             $form = $event->getForm();
             $formOptions = $form->getConfig()->getOptions();
+            
             $permissionData = $event->getData();
             
             $roles=$this->labelFormatter($this->roles);
+
+
+            if ($this->hidden_default_role)
+            {
+                $form->add("___ADD_ROLE_".$this->hidden_default_role,HiddenType::class , ['data' => $this->hidden_default_role]);
+            }
             
+
+            
+            $this->collector->data['reachable_roles']=$this->reachableRoles;
+            $this->collector->data['roles_formated']=$roles;
+            
+
             foreach ($roles as $label => $role) 
             {
                 
@@ -155,7 +205,8 @@ class UserRoleType extends AbstractType
                 }
                 else
                 {
-                    if ($formOptions['security_checked'] === 'strict')
+                    
+                    if ($this->security_checked)
                     {
                         $options['disabled'] = true;
                         if ($this->display=="all")
@@ -219,16 +270,23 @@ class UserRoleType extends AbstractType
         return($rolesReponse);
     }
     
+    
     /**
      * @inheritdoc
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'security_checked' => 'strict',
             'input_type' => CheckboxType::class,
-            'profile' => null,
             'config' => "default",
         ]);
+        /*
+        $resolver->setDefaults([
+            'security_checked' => true,
+            'input_type' => CheckboxType::class,
+            'profile' => null,
+        ]);
+         * 
+         */
     }
 }

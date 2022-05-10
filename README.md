@@ -82,7 +82,7 @@ The type can work whitout this file, but for specific configs / profiles
 	            display: all
 	            profile: myprofilesuper # if not set : all the roles in hierarchy
 	            security_checked: false # the user can grant whith role he hasn't... dont do that
-          myconfigspecific:
+                myconfigspecific:
 	            display: minimum
 	    profiles:
 	        myprofile: [ROLE_ADMIN, ROLE_USER, ROLE_EDITOR]

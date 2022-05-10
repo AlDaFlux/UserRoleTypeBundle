@@ -40,6 +40,7 @@ class Configuration implements ConfigurationInterface
                                     ->values(['all', 'standard', 'minimum'])->defaultValue('standard')
                                 ->end()
                                 ->scalarNode('profile')->end()
+                                ->scalarNode('hidden_default_role')->end()
                                 ->scalarNode('security_checked')->defaultValue('standard')->end()
                             ->end()
                         ->end()
