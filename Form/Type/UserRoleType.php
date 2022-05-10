@@ -120,15 +120,22 @@ class UserRoleType extends AbstractType
             
             $this->configOrOptions("display");
             $this->configOrOptions("profile");
+            
             $this->configOrOptions("security_checked");
             $this->configOrOptions("hidden_default_role");
-            
-
+             
 
         
             if ($this->profile)
             {
-                if (isset($this->profiles[$this->profile]))
+                if (substr($this->profile, 0,5)=="ROLE_")
+                {
+                    if (isset($this->parameters->Get('security.role_hierarchy.roles')[$this->profile]))
+                    {
+                        $this->roles=$this->parameters->Get('security.role_hierarchy.roles')[$this->profile];
+                    }
+                }
+                elseif (isset($this->profiles[$this->profile]))
                 {
                     $this->roles=[];
                     foreach ($this->profiles[$this->profile] as $role)
