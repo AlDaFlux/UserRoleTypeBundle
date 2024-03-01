@@ -96,7 +96,10 @@ class UserRoleType extends AbstractType
         {
             $this->{$optionName}=$this->config[$optionName];
         }
-        $this->collector->data[$optionName]=$this->{$optionName};
+//        $this->collector->data[$optionName]=$this->{$optionName};
+        $this->collector->setData($optionName, $this->{$optionName});         
+        
+        
     }
 
         
@@ -115,8 +118,12 @@ class UserRoleType extends AbstractType
             $this->configName=$options["config"];
             
             
-            $this->collector->data['config_name']= $this->configName;
-            $this->collector->data['config']=$this->config;
+            
+//            $this->collector->data['config_name']= $this->configName;
+//            $this->collector->data['config']=$this->config;
+            
+            $this->collector->setData('config_name', $this->configName);
+            $this->collector->setData('config', $this->config); 
             
             $this->configOrOptions("display");
             $this->configOrOptions("profile");
@@ -168,9 +175,8 @@ class UserRoleType extends AbstractType
                 
                 
             }
-            
-            
-            $this->collector->data['roles']=$this->roles;
+             
+            $this->collector->setData('roles', $this->roles); 
             
                
                          
@@ -193,9 +199,10 @@ class UserRoleType extends AbstractType
             
 
             
-            $this->collector->data['reachable_roles']=$this->reachableRoles;
-            $this->collector->data['roles_formated']=$roles;
-            
+//            $this->collector->data['reachable_roles']=$this->reachableRoles;
+  //          $this->collector->data['roles_formated']=$roles;
+            $this->collector->setData('reachable_roles', $this->reachableRoles); 
+            $this->collector->setData('roles_formated', $roles); 
 
             foreach ($roles as $label => $role) 
             {

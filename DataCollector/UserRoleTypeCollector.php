@@ -12,7 +12,7 @@ use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
 class UserRoleTypeCollector extends AbstractDataCollector{
 
     
-    public  $data;
+   // public  $data;
     public  $reachableRoles;
     
     public function __construct()
@@ -47,6 +47,12 @@ class UserRoleTypeCollector extends AbstractDataCollector{
     {
         return($this->data);
     }
+    
+    public function setData($key, $value)
+    {
+        $this->data[$key]=$value;
+    }
+    
     
     
     public function getRoles()

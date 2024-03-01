@@ -9,14 +9,15 @@ class UserRoleTransform implements DataTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transform($array)
+    public function transform($array) : mixed
     {
+        return $array;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($array)
+    public function reverseTransform($array) : mixed
     { 
         $returnArray = [];
         foreach ($array as $key => $value) 
