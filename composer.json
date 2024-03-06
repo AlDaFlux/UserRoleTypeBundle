@@ -1,7 +1,7 @@
 {
   "name": "aldaflux/user-role-type-bundle",
   "type": "symfony-bundle",
-  "description": "This is my bundle",
+  "description": "Synfony form type for user roles...",
   "keywords": ["Bundle"],
   "homepage": "https://github.com/Aldaflux/AldafluxUserRoleTypeBundle",
   "language":  "php",
@@ -9,8 +9,7 @@
  "minimum-stability": "stable",
  "prefer-stable":true,
  "require": {
-        "symfony/framework-bundle": ">=4.0",
-       "doctrine/collections": ">=1.0"
+        "symfony/framework-bundle": ">=6.0" 
   },
     "autoload": {
         "psr-4": {
