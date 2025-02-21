@@ -11,14 +11,17 @@ class UserRoleTransform implements DataTransformerInterface
      */
     public function transform($array) : mixed
     {
+ 
         return $array;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function reverseTransform($array) : mixed
+    public function reverseTransform($array) : array
     { 
+ 
+        //array_values($tableau);
         $returnArray = [];
         foreach ($array as $key => $value) 
         {
@@ -26,10 +29,11 @@ class UserRoleTransform implements DataTransformerInterface
             {
                 $returnArray[] = $value;
             }
-            elseif ($value) {
+            elseif ($value && ! is_integer($key)) {
                 $returnArray[] = $key;
             }
         }
+ 
         return $returnArray;
     }
 }
