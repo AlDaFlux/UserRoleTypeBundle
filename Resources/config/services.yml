@@ -1,0 +1,13 @@
+services:
+   Aldaflux\AldafluxUserRoleTypeBundle\DataCollector\UserRoleTypeCollector:
+        tags:
+            -
+                name:     data_collector
+                id:       'aldaflux.user_role_type_collector'
+   aldaflux.user_role_type_collector:
+        alias: Aldaflux\AldafluxUserRoleTypeBundle\DataCollector\UserRoleTypeCollector
+        public: true        
+   aldaflux_user_role_type.form.user_role_type:
+        class: Aldaflux\AldafluxUserRoleTypeBundle\Form\Type\UserRoleType
+        arguments: ['@security.role_hierarchy', "@security.helper", "@parameter_bag", "@aldaflux.user_role_type_collector"]
+        tags: [form.type]
